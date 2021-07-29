@@ -14,6 +14,7 @@ public class PlanetBodyController : MonoBehaviour, IPointerDownHandler, IPointer
   [SerializeField] GameObject planet;
   [SerializeField] string bodyType;
   [SerializeField] float blowForce = 10;
+  [SerializeField] AudioClip sound;
 
   Vector3 cursorOffset;
   Material material;
@@ -28,6 +29,8 @@ public class PlanetBodyController : MonoBehaviour, IPointerDownHandler, IPointer
 
   Transform egeoMouthInside;
 
+  AudioSource audioSource;
+
   void Awake()
   {
     springJoint = GetComponent<SpringJoint2D>();
@@ -38,6 +41,8 @@ public class PlanetBodyController : MonoBehaviour, IPointerDownHandler, IPointer
     shakingAmplitude = RandomDeviation(shakingAmplitude);
     slurpDuration = RandomDeviation(slurpDuration);
     bornDuration = RandomDeviation(bornDuration);
+
+    audioSource = GetComponent<AudioSource>();
   }
 
   void Start()
@@ -137,6 +142,10 @@ public class PlanetBodyController : MonoBehaviour, IPointerDownHandler, IPointer
       dragging = true;
 
       Debug.Log($"OnPointerDown(), tag: {gameObject.tag}");
+      audioSource.PlayOneShot(sound);
+      DOTween.Sequence()
+        .Append(transform.DOScale(new Vector3(2, 2, 2), 0.5f).SetEase(Ease.OutElastic))
+        .Append(transform.DOScale(new Vector3(1, 1, 1), 0.1f));
     }
   }
 
